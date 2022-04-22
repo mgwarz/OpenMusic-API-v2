@@ -10,15 +10,15 @@ const routes = (handler) => [
   {
     method: 'GET',
     path: '/playlists',
-    handler: handler.getPlaylistHandler,
+    handler: handler.getplaylistHandler,
     options: {
       auth: 'musicapp_jwt',
     },
   },
   {
-    method: 'DeLETE',
-    path: '/playlists',
-    handler: handler.deletePlaylistHandler,
+    method: 'DELETE',
+    path: '/playlists/{id}',
+    handler: handler.deletePlaylistByIdHandler,
     options: {
       auth: 'musicapp_jwt',
     },

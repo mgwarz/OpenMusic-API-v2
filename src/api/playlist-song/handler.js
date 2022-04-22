@@ -1,11 +1,8 @@
 const ClientError = require('../../exceptions/ClientError');
 
 class playlistSongsHandler {
-  constructor(service, playlistService, songsService, playlistSongActivitiesService, validator) {
+  constructor(service, playlistService, songsService, validator) {
     this._service = service;
-    this._playlistService = playlistService;
-    this._songsService = songsService;
-    this._playlistSongActivitiesService = playlistSongActivitiesService;
     this._validator = validator;
 
     this.postSongByIdPlaylistHandler = this.postSongByIdPlaylistHandler.bind(this);
@@ -20,14 +17,14 @@ class playlistSongsHandler {
       const { songsId } = request.payload;
       const { id: credentialId } = request.auth.credential;
       const { id: playlistId } = request.params;
+
       await this._playlistService.verifyPlaylistAccess(playlistId, credentialId);
-      await this._songsService.getSongById(songsId);
-      const SongsId = await this._service.addSongsInPlaylist(playlistId, songsId);
-      await this._playlistSongActivitiesService.addActivities(playlistId, songsId, credentialId, 'add');
+      await this._service.addSongToPlaylist(playlistId, songsId);
+
       const response = h.response({
         status: 'success',
         message: 'Berhasil menambahkan lagu pada playlist',
-        data: { SongsId },
+        // data: { SongsId },
       });
       response.code(201);
       return response;
@@ -38,6 +35,7 @@ class playlistSongsHandler {
           message: error.message,
         });
         response.code(error.statusCode);
+        console.error(error);
         return response;
       }
       //  Server error
@@ -56,13 +54,17 @@ class playlistSongsHandler {
     try {
       const { id: credentialId } = request.auth.credentials;
       const { id: playlistId } = request.params;
-      await this._playlistService.verifyPlaylistAccess(playlistId, credentialId);
-      const playlist = await this._playlistService.getPlaylistById(playlistId);
-      const songs = await this._songsService.getSongsByPlaylistId(playlistId);
-      playlist.songs = songs;
+
+      await this._service.verifyPlaylistAccess(playlistId, credentialId);
+      const playlist = await this._service.getPlaylistById(playlistId);
+      const songs = await this._service.getSongByIdPlaylist(playlistId);
+
+      const playlistContainSongs = { ...playlist, songs };
       return {
         status: 'success',
-        data: { playlist },
+        data: {
+          playlist: playlistContainSongs,
+        },
       };
     } catch (error) {
       if (error instanceof ClientError) {
@@ -88,12 +90,14 @@ class playlistSongsHandler {
   async deleteSongByIdPlaylistHandler(request, h) {
     try {
       this._validator.validatePlaylistSongsPayload(request.payload);
+
       const { songsId } = request.payload;
       const { id: playlistId } = request.params;
       const { id: credentialId } = request.auth.credentials;
-      await this._playlistService.verifyPlaylistAccess(playlistId, credentialId);
-      await this._service.deleteSongsInPlaylist(playlistId, songsId);
-      await this._playlistSongActivitiesService.addActivities(playlistId, songsId, credentialId, 'delete');
+
+      await this._Service.verifyPlaylistAccess(playlistId, credentialId);
+      await this._service.deleteSongByIdPlaylist(playlistId, songsId);
+
       return {
         status: 'success',
         message: 'Lagu berhasil dihapus pada playlist',

@@ -27,7 +27,7 @@ class playlistService {
   }
 
   // get playlist from owner
-  async getPlaylists(owner) {
+  async getPlaylist(owner) {
     const query = {
       text: `SELECT playlist.id, playlist.name, users.username
                  FROM playlist LEFT JOIN users ON users.id = playlist.owner

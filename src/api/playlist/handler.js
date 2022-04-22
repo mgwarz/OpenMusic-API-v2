@@ -16,11 +16,14 @@ class playlistHandler {
       this._validator.validatePlaylistPayload(request.payload);
       const { name } = request.payload;
       const { id: credentialId } = request.auth.credentials;
+
       const playlistId = await this._service.addPlaylist({ name, credentialId });
       const response = h.response({
         status: 'success',
         message: 'Playlist berhasil ditambahkan',
-        data: { playlistId },
+        data: {
+          playlistId,
+        },
       });
       response.code(201);
       return response;
@@ -31,7 +34,6 @@ class playlistHandler {
           message: error.message,
         });
         response.code(error.statusCode);
-        console.error(error);
         return response;
       }
       //  Server error
@@ -49,10 +51,17 @@ class playlistHandler {
   async getplaylistHandler(request, h) {
     try {
       const { id: credentialId } = request.auth.credentials;
-      const playlist = await this._service.getPlaylist(credentialId);
+      const data = await this._service.getPlaylist(credentialId);
+
       return {
         status: 'success',
-        data: { playlist },
+        data: {
+          playlists: data.map((n) => ({
+            id: n.id,
+            name: n.name,
+            username: n.username,
+          })),
+        },
       };
     } catch (error) {
       if (error instanceof ClientError) {
