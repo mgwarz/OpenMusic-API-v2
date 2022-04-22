@@ -2,7 +2,6 @@ const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
-const { mapDBToModelAlbum, mapDBToModelSong } = require('../../utils');
 
 class AlbumService {
   constructor() {
@@ -37,7 +36,7 @@ class AlbumService {
       throw new NotFoundError('Album tidak ditemukan');
     }
 
-    return result.rows.map(mapDBToModelAlbum)[0];
+    return result.rows[0];
   }
 
   // edit by id
@@ -75,7 +74,7 @@ class AlbumService {
       values: [id],
     };
     const result = await this._pool.query(query);
-    return result.rows.map(mapDBToModelSong);
+    return result.rows;
   }
 }
 module.exports = AlbumService;
