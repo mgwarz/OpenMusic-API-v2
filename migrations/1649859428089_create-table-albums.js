@@ -16,24 +16,16 @@ exports.up = (pgm) => {
       type: 'INTEGER',
       notNull: true,
     },
-    created_at: {
-      type: 'TEXT',
-      notNull: true,
-    },
-    updated_at: {
-      type: 'TEXT',
-      notNull: true,
-    },
   });
 
-  pgm.addConstrait(
-    'songs',
-    'fk_songs.album_id_albums.id',
-    'FOREIGN KEY(album_id) REFERENCES albums(id) ON DELETE CASCADE',
-  );
+  // pgm.addConstrait(
+  //   'songs',
+  //   'fk_songs.album_id_albums.id',
+  //   'FOREIGN KEY(album_id) REFERENCES albums(id) ON DELETE CASCADE',
+  // );
 };
 
 exports.down = (pgm) => {
-  pgm.dropConstrait('songs', 'fk_songs.album_id_albums.id');
+  // pgm.dropConstrait('songs', 'fk_songs.album_id_albums.id');
   pgm.dropTable('albums');
 };
