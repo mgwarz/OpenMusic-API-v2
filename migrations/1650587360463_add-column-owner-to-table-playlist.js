@@ -11,5 +11,5 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
-  pgm.dropColumn('notes', 'owner');
+  pgm.dropColumn('playlist');
 };
