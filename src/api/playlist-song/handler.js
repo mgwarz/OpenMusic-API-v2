@@ -16,19 +16,19 @@ class playlistSongsHandler {
   async postSongByIdPlaylistHandler(request, h) {
     try {
       this._validator.validatePlaylistSongsPayload(request.payload);
-      const { songsId } = request.payload;
+      const { songId } = request.payload;
       const { id: credentialId } = request.auth.credential;
       const { id: playlistId } = request.params;
 
       await this._playlistService.verifyPlaylistAccess(playlistId, credentialId);
-      await this._songsservice.getSongById(songsId);
+      await this._songsservice.getSongById(songId);
 
-      const SongsId = await this._service.addSongsPlaylist(playlistId, songsId);
+      const SongId = await this._service.addSongsPlaylist(playlistId, songId);
 
       const response = h.response({
         status: 'success',
         message: 'Berhasil menambahkan lagu pada playlist',
-        data: SongsId,
+        data: SongId,
       });
       response.code(201);
       return response;

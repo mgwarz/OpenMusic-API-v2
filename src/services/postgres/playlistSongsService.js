@@ -10,12 +10,12 @@ class playlistSongService {
 
   //  add song to playlist
   async addSongsPlaylist({
-    playlistId, songsId,
+    playlistId, songId,
   }) {
     const id = `playlist_song-${nanoid(16)}`;
     const query = {
       text: 'INSERT INTO playlist_song VALUES($1, $2, $3) RETURNING id',
-      values: [id, playlistId, songsId],
+      values: [id, playlistId, songId],
     };
     const result = await this._pool.query(query);
     if (!result.rows[0].id) {
@@ -25,10 +25,10 @@ class playlistSongService {
   }
 
   //  delete songs in playlist
-  async deleteSongByIdPlaylist(playlistId, songsId) {
+  async deleteSongByIdPlaylist(playlistId, songId) {
     const query = {
       text: 'DELETE FROM playlist_song WHERE playlist_id = $1, AND songs_id = $2 RETURNING id',
-      values: [playlistId, songsId],
+      values: [playlistId, songId],
     };
     const result = await this._pool.query(query);
     if (!result.rows.length) {
