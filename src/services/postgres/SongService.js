@@ -13,7 +13,7 @@ class SongService {
   async addSong({
     title, year, genre, performer, duration, albumId,
   }) {
-    const id = nanoid(16);
+    const id = `songs-${nanoid(16)}`;
     const createdAt = new Date().toISOString();
     const updatedAt = createdAt;
 
@@ -50,6 +50,17 @@ class SongService {
       throw new NotFoundError('Lagu tidak ditemukan. Id tidak ditemukan');
     }
     return result.rows.map(mapDBToModelSong)[0];
+  }
+
+  // get song bt playlist id
+  async getSongsByPlaylistId(playlistId) {
+    const result = await this._pool.query({
+      text: `SELECT songs.id, songs.title, songs.performer FROM songs 
+                LEFT JOIN playlist_song ON playlist_song.song_id = songs.id 
+                WHERE playlist_song.playlist_id = $1`,
+      values: [playlistId],
+    });
+    return result.rows;
   }
 
   // POST (edit songs by id)

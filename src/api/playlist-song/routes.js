@@ -1,7 +1,7 @@
 const routes = (handler) => [
   {
     method: 'POST',
-    path: '/playlists/{id}/songs',
+    path: '/playlists/{playlistId}/songs',
     handler: handler.postSongByIdPlaylistHandler,
     options: {
       auth: 'musicapp_jwt',
@@ -9,7 +9,7 @@ const routes = (handler) => [
   },
   {
     method: 'GET',
-    path: '/playlists/{id}/songs',
+    path: '/playlists/{playlistId}/songs',
     handler: handler.getSongByIdPlaylistHandler,
     options: {
       auth: 'musicapp_jwt',
@@ -17,7 +17,7 @@ const routes = (handler) => [
   },
   {
     method: 'DELETE',
-    path: '/playlists/{id}/songs',
+    path: '/playlists/{playlistId}/songs',
     handler: handler.deleteSongByIdPlaylistHandler,
     options: {
       auth: 'musicapp_jwt',
