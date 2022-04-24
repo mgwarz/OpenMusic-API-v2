@@ -24,6 +24,20 @@ class playlistSongService {
     return result.rows[0].id;
   }
 
+  // get song playlist
+  async getSongByIdPlaylist(playlistId) {
+    const query = {
+      text: `SELECT songs.id as id, songs.title, songs.performer FROM playlist_song
+    JOIN songs on playlist_song.songs_id=songs.id
+    WHERE playlist_song.playlist_id = $1`,
+      values: [playlistId],
+    };
+
+    const result = await this._pool.query(query);
+
+    return result.rows;
+  }
+
   //  delete songs in playlist
   async deleteSongByIdPlaylist(playlistId, songId) {
     const query = {
