@@ -12,7 +12,7 @@ class playlistService {
 
   // add playlist
   async addPlaylist({
-    name, owner,
+    name, owner = credentialId,
   }) {
     const id = `playlist-${nanoid(16)}`;
     const query = {
