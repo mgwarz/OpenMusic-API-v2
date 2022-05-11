@@ -52,17 +52,6 @@ class SongService {
     return result.rows.map(mapDBToModelSong)[0];
   }
 
-  // get song bt playlist id
-  async getSongsByPlaylistId(playlistId) {
-    const result = await this._pool.query({
-      text: `SELECT songs.id, songs.title, songs.performer FROM songs 
-                LEFT JOIN playlist_song ON playlist_song.song_id = songs.id 
-                WHERE playlist_song.playlist_id = $1`,
-      values: [playlistId],
-    });
-    return result.rows;
-  }
-
   // POST (edit songs by id)
   async editSongById(id, {
     title, year, genre, performer, duration, albumId,
@@ -91,6 +80,36 @@ class SongService {
     if (!result.rows.length) {
       throw new NotFoundError('lagu gagal dihapus. Id tidak ditemukan');
     }
+  }
+
+  // get song bt playlist id
+  async getSongByIdPlaylist(playlistId) {
+    const query = {
+      text: `SELECT songs.id, songs.title, songs.performer FROM songs
+      INNER JOIN playlist_song ON songs.id = playlist_song.song_id
+      WHERE playlist_song.playlist_id = $1`,
+      values: [playlistId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError('Playlist not found');
+    }
+
+    const songs = result.rows.map((row) => ({
+      id: row.song_id,
+      title: row.song_title,
+      performer: row.performer,
+    }));
+
+    const playlstResult = {
+      id: result.rows[0].id,
+      name: result.rows[0].name,
+      songs,
+    };
+
+    return playlstResult;
   }
 }
 module.exports = SongService;

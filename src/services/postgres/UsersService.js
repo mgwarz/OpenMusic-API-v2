@@ -28,6 +28,19 @@ class UsersService {
     return result.rows[0].id;
   }
 
+  // verify new username
+  async verifyNewUsername(username) {
+    const query = {
+      text: 'SELECT username FROM users WHERE username = $1',
+      values: [username],
+    };
+
+    const result = await this._pool.query(query);
+    if (result.rows.length > 0) {
+      throw new InvariantError('Gagal menambahkan user. Username sudah digunakan.');
+    }
+  }
+
   // get user by id
   async getUserById(userId) {
     const query = {
@@ -40,19 +53,6 @@ class UsersService {
       throw new NotFoundError('User tidak ditemukan');
     }
     return result.rows[0];
-  }
-
-  // verify new username
-  async verifyNewUsername(username) {
-    const query = {
-      text: 'SELECT username FROM users WHERE username = $1',
-      values: [username],
-    };
-
-    const result = await this._pool.query(query);
-    if (result.rows.length > 0) {
-      throw new InvariantError('Gagal menambahkan user. Username sudah digunakan.');
-    }
   }
 
   // verify user credential
@@ -69,6 +69,7 @@ class UsersService {
 
     const { id, password: hashedPassword } = result.rows[0];
     const match = await bcrypt.compare(password, hashedPassword);
+
     if (!match) {
       throw new AuthenticationError('Kredensial yang Anda berikan salah');
     }

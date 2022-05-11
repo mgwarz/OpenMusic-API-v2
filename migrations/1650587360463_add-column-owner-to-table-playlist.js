@@ -6,6 +6,8 @@ exports.up = (pgm) => {
   pgm.addColumn('playlist', {
     owner: {
       type: 'VARCHAR(50)',
+      notNull: true,
+
     },
   });
 };

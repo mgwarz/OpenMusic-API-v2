@@ -93,37 +93,6 @@ class playlistService {
     return result.rows[0].id;
   }
 
-  // get song by id from playlist
-  async getSongByIdPlaylist(playlistId) {
-    const query = {
-      text: `SELECT playlist.*, songs.id as song_id, songs.title as song_title, songs.performer FROM playlist
-      LEFT JOIN playlist_songs ON playlist_songs.playlist_id = playlist.id
-      LEFT JOIN songs ON songs.id = playlist_songs.song_id
-      WHERE playlist.id = $1`,
-      values: [playlistId],
-    };
-
-    const result = await this._pool.query(query);
-
-    if (!result.rows.length) {
-      throw new NotFoundError('Playlist not found');
-    }
-
-    const songs = result.rows.map((row) => ({
-      id: row.song_id,
-      title: row.song_title,
-      performer: row.performer,
-    }));
-
-    const playlstResult = {
-      id: result.rows[0].id,
-      name: result.rows[0].name,
-      songs,
-    };
-
-    return playlstResult;
-  }
-
   // get all song from playlist
   async getPlaylistSongs(id) {
     const query = {
